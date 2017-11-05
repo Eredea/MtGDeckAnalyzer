@@ -20,7 +20,7 @@ def get_card_by_name(name):
         if card.image_url is not None:
             return card
 
-def get_card_picture(name):
+def get_card_picure(name):
     """:param name: string of card's name
        :returns ImageTk.PhotoImage of
     """
@@ -33,9 +33,4 @@ def get_card_picture(name):
             # Here I also learned all about the break statement, including that it wasn't necessary.
             return imageObj
 
-class Deck:
-
-    def __init__(self):
-        self.cards = []
-    pass
 
