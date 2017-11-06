@@ -34,12 +34,20 @@ def get_card_picure(name):
             return imageObj
 
 class Deck:
+
+    # Colors of the cards don't change, so we make this a class variable
     color_ids = 'B', 'U', 'G', 'R', 'W', None
 
     def __init__(self, cards = () ):
-
         self.cards = [get_card_by_name(card) for card in cards]
     pass
+
+    def __iter__(self):
+        for card in self.cards:
+            yield card
+
+    def __str__(self):
+        return '\n'.join([card.name for card in self])
 
     @property
     def mean_mana(self):
@@ -53,11 +61,8 @@ class Deck:
     def mana_curve_proportions(self):
 
         colors = [card.color_identity[0] for card in self.cards]
-        print(colors)
         counts = [colors.count(id) for id in Deck.color_ids]
-        print(counts)
         proportions = [count/len(colors) for count in counts]
-        print(proportions)
         return proportions
 
 
@@ -65,3 +70,7 @@ class Deck:
         """Should be called with a string or a Card object"""
         self.cards.append(card) if type(card) is Card else self.cards.append(get_card_by_name(card))
 
+
+a = Deck(["LLanowar Elves", "Swords to plowshares"])
+
+print(a)
