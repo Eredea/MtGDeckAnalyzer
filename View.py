@@ -1,5 +1,5 @@
 import tkinter
-from Model import *
+from MtGUtils import *
 from PIL import Image, ImageTk
 from urllib.request import urlopen
 from io import BytesIO
@@ -15,10 +15,10 @@ Dark Ritual
 Swords to plowshares
 """
 
-
-class Client:
-    """The client class exposes functionality to create an instance of our application."""
 # May want to later add functionality here, so abstracted it out
+class Client:
+    """The client class exposes functionality to create an instance of our application.
+       It is created for pre-processing such as loading a default deck."""
 
     def __init__(self):
         self.root = tkinter.Tk()
@@ -39,11 +39,19 @@ class Client:
 
 # Here are custom tk widgets used in the MainPage class
 class CardListDisplay(tkinter.Listbox):
+    """Custom tkinter Listbox widget which automatically binds the click-list event."""
     def __init__(self, masterFrame, linkedLabel = None, **kwargs, ):
         self.masterFrame = masterFrame
-        #Under this super call I'm wondering the differences if I refer to self.masterFrame or not
+
+        # Under this super call I'm wondering the differences if I refer to self.masterFrame or not
+        # I don't think there's a difference here.
         super().__init__(self.masterFrame, kwargs)
         self.bind('<<ListboxSelect>>', self.click_deck_list)
+
+    def show_deck(self, deck):
+        self.delete(0,'end')
+        for card in deck:
+            self.insert('end', card.name)
 
 
     def click_deck_list(self, evt):
@@ -60,6 +68,8 @@ class MainPage:
 
 
     def __init__(self, master, deck=Deck()):
+        """MainPage is where we compose all the tkinter UI elements and associated resources into one working application.
+           Packing of the widgets is all done at the bottom."""
         self.deck = deck
 
         # Here is a solution to a problem of "How do we update a widget on a different frame"
@@ -69,43 +79,29 @@ class MainPage:
 
         # This frame is used to organize the search bar and search results sections on the left.
         self.leftDisplay = LeftDisplay(self.master, width = 50, borderwidth = 1, relief = 'raised')
-
-        """
-        # Here is similar logic to the first commit in the initname
+        # Here is similar logic to the first # comment in the init
         self.leftDisplay.deckListButton['command'] = lambda: self.add_to_deck_list(self.leftDisplay.displayedCard.name)
-        self.leftDisplay.pack(fill = 'y', side = 'left')"""
 
-        # Here is similar logic to the first commit in the init
-        self.leftDisplay.deckListButton['command'] = lambda: self.add_to_deck_list(self.leftDisplay.displayedCard.name)
-        self.leftDisplay.pack(fill='y', side='left')
-
-        #self.deckListDisplay = tkinter.Listbox(self.master, width=100, height=20)
-        #self.deckListDisplay.bind('<<ListboxSelect>>', self.click_deck_list)
-        #self.deckListDisplay.pack(fill='both', side='bottom')
 
         # This is the card pool display spanning the bottom of the screen.
         self.deckListDisplay = CardListDisplay(self.master, width =100, height =20 )
-        if self.deck.cards:
-            for card in self.deck.cards:
-                self.deckListDisplay.insert('end',card.name)
+        self.deckListDisplay.show_deck(deck)
 
-        self.deckListDisplay.pack(fill='both',side='bottom')
 
         self.stats_viewer = StatisticViewer(self.master)
-        self.stats_viewer.pack()
 
         self.updateButton = tkinter.Button(self.master, command= lambda: self.stats_viewer.refreshFigure(self.deck.mana_curve_proportions))
+
+        self.leftDisplay.pack(fill='y', side='left')
+        self.deckListDisplay.pack(fill='both',side='bottom')
+        self.stats_viewer.pack()
         self.updateButton.pack()
 
-
+    def start_UI(self):
+        self.master.mainloop()
 
     def display_card(self, cardName ):
         self.leftDisplay.display_card(cardName)
-
-    def click_deck_list(self, evt):
-        w = evt.widget
-        index = int(w.curselection()[0])
-        value = w.get(index)
 
 
     def add_to_deck_list(self, cardName):
@@ -113,8 +109,6 @@ class MainPage:
             self.deck.cards.append(get_card_by_name(cardName))
 
 
-    def start_UI(self):
-        self.master.mainloop()
 
 
 #Here are individual frame objects that make up the main frame:
@@ -169,16 +163,14 @@ class LeftDisplay(tkinter.Frame):
 
         # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
         # and recreating it from its bytes
-        a =Image.open(BytesIO(urlopen(card.image_url).read()))
-        cardImage = ImageTk.PhotoImage(a)
+        imageFileObject =Image.open(BytesIO(urlopen(card.image_url).read()))
+        cardImage = ImageTk.PhotoImage(imageFileObject)
 
-        # This updates the image shown
         self.cardImageBox.config(image = cardImage)
         # This is necessary because tkinter doesn't update python, so we need to hold on to the reference
         self.cardImageBox.image = cardImage
-
-        # This updates the text
         self.cardInfoDisplay.config(text = card.set_name + " " + card.text)
+
 
         # We update this so other functions in the class can work with the card
         # I know some of these comments are totally unnecessary to read
@@ -206,9 +198,8 @@ class StatisticViewer(tkinter.Frame):
 
         f = Figure(figsize=(5, 5), dpi=100)
         self.a = f.add_subplot(111)
-        #a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
 
-        labels = 'Red', 'Green', 'Black', 'White', 'Blue'
+
         sizes = [20,20,20,20,20, 0]
         self.a.pie(sizes, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
 
