@@ -33,4 +33,35 @@ def get_card_picure(name):
             # Here I also learned all about the break statement, including that it wasn't necessary.
             return imageObj
 
+class Deck:
+    color_ids = 'B', 'U', 'G', 'R', 'W', None
+
+    def __init__(self, cards = () ):
+
+        self.cards = [get_card_by_name(card) for card in cards]
+    pass
+
+    @property
+    def mean_mana(self):
+        return sum([card.cmc for card in self.cards])/len(self.cards)
+
+    @property
+    def mana_curve_tuple(self):
+        return []
+
+    @property
+    def mana_curve_proportions(self):
+
+        colors = [card.color_identity[0] for card in self.cards]
+        print(colors)
+        counts = [colors.count(id) for id in Deck.color_ids]
+        print(counts)
+        proportions = [count/len(colors) for count in counts]
+        print(proportions)
+        return proportions
+
+
+    def add_card(self, card):
+        """Should be called with a string or a Card object"""
+        self.cards.append(card) if type(card) is Card else self.cards.append(get_card_by_name(card))
 

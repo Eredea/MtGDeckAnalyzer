@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 
 default_decklist = """Llanowar elves
 Dark Ritual
-Lodestone Myr
+Swords to plowshares
 """
 
 
@@ -22,9 +22,8 @@ class Client:
 
     def __init__(self):
         self.root = tkinter.Tk()
-        self.ui = MainPage(self.root)
-        print(default_decklist.splitlines())
-        self.ui.deck = Deck(default_decklist.splitlines())
+        def_deck = Deck(default_decklist.splitlines())
+        self.ui = MainPage(self.root, deck=def_deck)
 
     def new_instance(self):
         self.ui.start_UI()
@@ -60,8 +59,8 @@ class CardListDisplay(tkinter.Listbox):
 class MainPage:
 
 
-    def __init__(self, master):
-        self.deck = Deck()
+    def __init__(self, master, deck=Deck()):
+        self.deck = deck
 
         # Here is a solution to a problem of "How do we update a widget on a different frame"
         # They all have a reference to master, so we can call things from master and assign them here.
@@ -86,13 +85,17 @@ class MainPage:
 
         # This is the card pool display spanning the bottom of the screen.
         self.deckListDisplay = CardListDisplay(self.master, width =100, height =20 )
+        if self.deck.cards:
+            for card in self.deck.cards:
+                self.deckListDisplay.insert('end',card.name)
+
         self.deckListDisplay.pack(fill='both',side='bottom')
 
         self.stats_viewer = StatisticViewer(self.master)
         self.stats_viewer.pack()
 
-
-
+        self.updateButton = tkinter.Button(self.master, command= lambda: self.stats_viewer.refreshFigure(self.deck.mana_curve_proportions))
+        self.updateButton.pack()
 
 
 
@@ -107,7 +110,7 @@ class MainPage:
 
     def add_to_deck_list(self, cardName):
             self.deckListDisplay.insert('end', cardName)
-            self.deck.cards.append(cardName)
+            self.deck.cards.append(get_card_by_name(cardName))
 
 
     def start_UI(self):
@@ -194,54 +197,36 @@ class LeftDisplay(tkinter.Frame):
 
 class StatisticViewer(tkinter.Frame):
 
+    pieChartColors = ['black', 'blue', 'green', 'red', 'white', 'yellow']
+    pieChartLabels = ['Black', 'Blue', 'Green', 'Red', 'White', 'Colorless']
+
+
     def __init__(self, master, **kwargs):
         super().__init__(master, kwargs)
 
         f = Figure(figsize=(5, 5), dpi=100)
-        a = f.add_subplot(111)
+        self.a = f.add_subplot(111)
         #a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
 
         labels = 'Red', 'Green', 'Black', 'White', 'Blue'
-        sizes = [20,20,20,20,20]
-        a.pie(sizes, labels = labels, colors = [label.lower() for label in labels], explode=[0,0,0,.1,0], shadow=True, autopct='%1.1f%%')
+        sizes = [20,20,20,20,20, 0]
+        self.a.pie(sizes, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
 
-        canvas = FigureCanvasTkAgg(f, self)
-        canvas.show()
-        canvas.get_tk_widget().pack(side=tkinter.BOTTOM, fill=tkinter.BOTH, expand=True)
+        self.canvas = FigureCanvasTkAgg(f, self)
+        self.canvas.show()
+        self.canvas.get_tk_widget().pack(side=tkinter.BOTTOM, fill=tkinter.BOTH, expand=True)
 
-        toolbar = NavigationToolbar2TkAgg(canvas, self)
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self)
         toolbar.update()
-        canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
+        self.canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
 
-
-
-
+    def refreshFigure(self, sizes):
+        self.a.clear()
+        self.a.pie(sizes, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
+        self.canvas.draw()
 
     def reAnalyze(self, deck):
         pass
-
-
-
-class Deck:
-
-    def __init__(self, cards = () ):
-
-        self.cards = [get_card_by_name(card) for card in cards]
-    pass
-
-    @property
-    def mean_mana(self):
-        return sum([card.cmc for card in self.cards])/len(self.cards)
-
-    @property
-    def mana_curve_tuple(self):
-        return []
-
-    def add_card(self, card):
-        """Should be called with a string or a Card object"""
-        self.cards.append(card) if type(card) is Card else self.cards.append(get_card_by_name(card))
-
-
 
 if __name__ == "__main__":
     start = Client().new_instance()
