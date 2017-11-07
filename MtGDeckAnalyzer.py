@@ -40,15 +40,26 @@ class Client:
 # Here are custom tk widgets used in the MainPage class
 class CardListDisplay(tkinter.Listbox):
     """Custom tkinter Listbox widget which automatically binds the click-list event."""
-    def __init__(self, masterFrame, linkedLabel = None, **kwargs, ):
-        self.masterFrame = masterFrame
-
+    def __init__(self, masterFrame, linkedDisplay = False, deck = Deck(), **kwargs, ):
         # Under this super call I'm wondering the differences if I refer to self.masterFrame or not
         # I don't think there's a difference here.
+        self.masterFrame = masterFrame
         super().__init__(self.masterFrame, kwargs)
-        self.bind('<<ListboxSelect>>', self.click_deck_list)
+
+        self.deck = deck
+        self.linkedDisplay = linkedDisplay
+        if self.linkedDisplay:
+            self.bind('<<ListboxSelect>>', self.click_deck_list)
+
+    def add_card(self, card):
+        card = card if type(card) is Card else get_card_by_name(card)
+        self.insert('end',card.name)
+        self.deck.add_card(card)
+
 
     def show_deck(self, deck):
+        """Updates listbox UI with card names from deck object."""
+        self.deck = deck
         self.delete(0,'end')
         for card in deck:
             self.insert('end', card.name)
@@ -56,12 +67,17 @@ class CardListDisplay(tkinter.Listbox):
 
     def click_deck_list(self, evt):
         w = evt.widget
-        print("Hi1")
         if w.curselection():
-            print("Hi2")
             index = int(w.curselection()[0])
             cardName = w.get(index)
-            self.masterFrame.display_card(cardName)
+            card = self.deck.get_card(cardName)
+            print(card)
+            print(card.name)
+            self.masterFrame.display_card(card)
+
+    @property
+    def selectedCard(self):
+        pass
 
 
 class MainPage:
@@ -71,50 +87,47 @@ class MainPage:
         """MainPage is where we compose all the tkinter UI elements and associated resources into one working application.
            Packing of the widgets is all done at the bottom."""
         self.deck = deck
-
-        # Here is a solution to a problem of "How do we update a widget on a different frame"
-        # They all have a reference to master, so we can call things from master and assign them here.
         self.master = master
         self.master.display_card = self.display_card
 
-        # This frame is used to organize the search bar and search results sections on the left.
-        self.leftDisplay = LeftDisplay(self.master, width = 50, borderwidth = 1, relief = 'raised')
-        # Here is similar logic to the first # comment in the init
-        self.leftDisplay.deckListButton['command'] = lambda: self.add_to_deck_list(self.leftDisplay.displayedCard.name)
 
+        self.leftDisplay = LeftDisplay(self.master,
+                                       bg= 'black',
+                                       width = 50,
+                                       borderwidth = 1,
+                                       relief = 'raised')
+        self.leftDisplay.deckListButton['command'] = lambda: self.add_to_deck_list(self.leftDisplay.displayedCard)
 
         # This is the card pool display spanning the bottom of the screen.
-        self.deckListDisplay = CardListDisplay(self.master, width =100, height =20 )
+        self.deckListDisplay = CardListDisplay(self.master, linkedDisplay=True, width =100, height =20 )
         self.deckListDisplay.show_deck(deck)
 
-
         self.stats_viewer = StatisticViewer(self.master)
+        self.statsButton = tkinter.Button(self.master, command= lambda: self.stats_viewer.refreshFigure(self.deck.manaColorProportions))
 
-        self.updateButton = tkinter.Button(self.master, command= lambda: self.stats_viewer.refreshFigure(self.deck.mana_curve_proportions))
 
         self.leftDisplay.pack(fill='y', side='left')
         self.deckListDisplay.pack(fill='both',side='bottom')
         self.stats_viewer.pack()
-        self.updateButton.pack()
+        self.statsButton.pack()
 
     def start_UI(self):
         self.master.mainloop()
 
-    def display_card(self, cardName ):
-        self.leftDisplay.display_card(cardName)
+    def display_card(self, card):
+        self.leftDisplay.display_card(card)
 
 
-    def add_to_deck_list(self, cardName):
-            self.deckListDisplay.insert('end', cardName)
-            self.deck.cards.append(get_card_by_name(cardName))
-
-
-
+    def add_to_deck_list(self, card):
+            self.deckListDisplay.add_card(card)
+            self.deck.add_card(card)
 
 #Here are individual frame objects that make up the main frame:
 class LeftDisplay(tkinter.Frame):
 
     def __init__(self, parent, **kwargs):
+        """Creates and configures widgets that will be placed on the left side of the screen.
+            Packing is done at the end."""
         super().__init__(parent, kwargs)
 
         # There is always one displayed card in this area, and functions act around it.
@@ -125,67 +138,50 @@ class LeftDisplay(tkinter.Frame):
         self.photo = ImageTk.PhotoImage(self.image)
 
         # The display of the current card is created and placed.
-        self.cardImageBox = tkinter.Label(self, image=self.photo, height=300, width=300)
+        self.cardImageBox = tkinter.Label(self, bg='black',image=self.photo, height=300, width=300)
         self.cardImageBox.image = self.photo
-        self.cardImageBox.pack(side='top')
 
         #Here we create the text that displays MtG information about the card
-        self.cardInfoDisplay = tkinter.Label(self, text="Card Information will be displayed here.")
-        self.cardInfoDisplay.pack(fill='y')
+        self.cardInfoDisplay = tkinter.Label(self, text="Card Information will be displayed here.", height = 5, width = 50, )
 
         #Searchbox for cards and corresponding results
         self.cardSearchBox = tkinter.Entry(self)
-        self.cardSearchBox.insert(0, "Search for a card")
-        self.searchResultsList = CardListDisplay(self)
+        self.cardSearchBox.insert(0, "Swords to plowshares")
+        self.searchResultsList = CardListDisplay(self, linkedDisplay=True)
 
-        #Order of packing matters, we want results on top
-        self.searchResultsList.pack(fill='both')
-        self.cardSearchBox.pack()
-
-        #The button to search
-        # Used lambda here because the command needs to be callable, but I wanted to send parameters.
-        # CRITIQUE: Here, I think I should take the search_card command away from self
-        # Within the MYUi object, we could declare the command.
-        self.searchButton = tkinter.Button(self, command=lambda: self.search_card(self.cardSearchBox.get()),
-                                           text="Search for Card")
-        self.searchButton.pack()
+        self.searchButton = tkinter.Button(self, command=lambda: self.search_card(self.cardSearchBox.get()),text="Search for Card")
 
         # Here is a design point
         # When the button is clicked, we need to both alter the display and update the APPLICATION's current deck values
         # We could from the MYUI class do self.leftdisplay.deckListButton[command] from a place where we have more scope
-        self.deckListButton = tkinter.Button(self, text="Add to DeckList")
+        self.deckListButton = tkinter.Button(self, font = 'Times', bg='black', fg= 'white', text="Add to DeckList")
+
+        self.cardImageBox.pack(side='top')
+        self.cardInfoDisplay.pack(fill='y')
+        self.searchResultsList.pack(fill='both')
+        self.cardSearchBox.pack()
+        self.searchButton.pack()
         self.deckListButton.pack()
 
     def display_card(self, card):
 
-        if type(card) is not Card:
+        if type(card) is str:
+            print("Used str")
             card = get_card_by_name(card)
-
-        # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
-        # and recreating it from its bytes
-        imageFileObject =Image.open(BytesIO(urlopen(card.image_url).read()))
-        cardImage = ImageTk.PhotoImage(imageFileObject)
-
-        self.cardImageBox.config(image = cardImage)
+        print("card for display_card", card)
+        image = get_card_picture(card)
+        self.cardImageBox.config(image = image)
         # This is necessary because tkinter doesn't update python, so we need to hold on to the reference
-        self.cardImageBox.image = cardImage
+        self.cardImageBox.image = image
         self.cardInfoDisplay.config(text = card.set_name + " " + card.text)
-
-
-        # We update this so other functions in the class can work with the card
-        # I know some of these comments are totally unnecessary to read
         self.displayedCard = card
 
     # Callback for searchButton
     def search_card(self, cardName):
         # When Searching I could populate all results and have them stored ready to click
         # Right now I just display the search results and then when clicking the listbox create another card item
-        cards = Card.where(name=cardName).all()
-        cardNames = set([card.name for card in cards])
-        self.searchResultsList.delete(0, 'end')
-        for name in cardNames:
-            self.searchResultsList.insert('end', name)
-
+        searchResults = Deck.search(cardName)
+        self.searchResultsList.show_deck(searchResults)
 
 class StatisticViewer(tkinter.Frame):
 
@@ -218,6 +214,17 @@ class StatisticViewer(tkinter.Frame):
 
     def reAnalyze(self, deck):
         pass
+
+
+def get_card_picture(card):
+    """:param card: Card object
+       :returns ImageTk.PhotoImage of Card
+    """
+    # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
+    # and recreating it from its bytes
+    imageFileObject = Image.open(BytesIO(urlopen(card.image_url).read()))
+    cardImage = ImageTk.PhotoImage(imageFileObject)
+    return cardImage
 
 if __name__ == "__main__":
     start = Client().new_instance()

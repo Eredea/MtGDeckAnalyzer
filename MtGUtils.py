@@ -15,23 +15,8 @@ def get_card_by_name(name):
         :param name: Name of the card to search
         :returns: Card object
         """
-    cards = Card.where(name = name).all()
-    for card in cards:
-        if card.image_url is not None:
-            return card
+    return next(card for card in Card.where(name = name).all() if card.image_url is not None)
 
-def get_card_picure(name):
-    """:param name: string of card's name
-       :returns ImageTk.PhotoImage of
-    """
-    cards = Card.where(name = name).all()
-    for card in cards:
-        if card.image_url is not None:
-            imageLoc = "{}.png".format(name)
-            wget.download(card.image_url, out=imageLoc)
-            imageObj = ImageTk.PhotoImage(Image.open(imageLoc))
-            # Here I also learned all about the break statement, including that it wasn't necessary.
-            return imageObj
 
 class Deck:
 
@@ -40,7 +25,6 @@ class Deck:
 
     def __init__(self, cards = () ):
         self.cards = [get_card_by_name(card) for card in cards]
-    pass
 
     def __iter__(self):
         for card in self.cards:
@@ -58,17 +42,53 @@ class Deck:
         return []
 
     @property
-    def mana_curve_proportions(self):
-
+    def manaColorProportions(self):
         colors = [card.color_identity[0] for card in self.cards]
         counts = [colors.count(id) for id in Deck.color_ids]
         proportions = [count/len(colors) for count in counts]
         return proportions
 
+    @property
+    def mana_curve(self):
+        pass
+
+    @property
+    def total_power(self):
+        pass
+
+    def card_type_proportions(self):
+        pass
+
+    def average_creature_power(self):
+        pass
+
+    def get_card(self, cardName):
+        return next(card for card in self.cards if card.name == cardName)
 
     def add_card(self, card):
         """Should be called with a string or a Card object"""
+        #self.cards.append(card) if type(card) == Card else self.cards.append(get_card_by_name(card))
         self.cards.append(card) if type(card) is Card else self.cards.append(get_card_by_name(card))
+
+    @staticmethod
+    def search(cardStr):
+        #TODO optimize this because I am creating card objects twice
+        #I think it may be better optimized now but it's ugly as all hell
+        results = Card.where(name=cardStr).all()
+        cardNames = set(card.name for card in results)
+        deck = Deck()
+        for cardname in cardNames:
+            for card in results:
+                if card.name == cardname and card.image_url is not None:
+                    deck.add_card(card)
+                    break
+                continue
+        return deck
+
+
+
+
+
 
 
 a = Deck(["LLanowar Elves", "Swords to plowshares"])
