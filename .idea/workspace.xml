@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a6c98aaf-0c85-4f85-b878-899da20798a7" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mtg-sdk-python" afterPath="$PROJECT_DIR$/mtg-sdk-python" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MtGUtils.py" afterPath="$PROJECT_DIR$/MtGUtils.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MtGUtils.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MtGUtils.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MtGUtils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="15" column="33" lean-forward="false" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
+            <state relative-caret-position="342">
+              <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -25,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MtGDeckAnalyzer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MtGDeckAnalyzer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MtGDeckAnalyzer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+            <state relative-caret-position="180">
+              <caret line="19" column="3" lean-forward="true" selection-start-line="19" selection-start-column="3" selection-end-line="19" selection-end-column="3" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
                 <element signature="e#477#858#0" expanded="false" />
@@ -89,7 +90,7 @@
       <file leaf-file-name="querybuilder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mtg-sdk-python/mtgsdk/querybuilder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
+            <state relative-caret-position="-422">
               <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
               <folding />
             </state>
@@ -140,12 +141,12 @@
         <option value="$PROJECT_DIR$/mtg-sdk-python/Test.py" />
         <option value="$PROJECT_DIR$/mtg-sdk-python/mtgsdk/card.py" />
         <option value="$PROJECT_DIR$/mtg-sdk-python/mtgsdk/querybuilder.py" />
-        <option value="$PROJECT_DIR$/MtGUtils.py" />
         <option value="$PROJECT_DIR$/Test.py" />
         <option value="$PROJECT_DIR$/DefaultDeck.txt" />
         <option value="$PROJECT_DIR$/TestDecklist.txt" />
         <option value="$PROJECT_DIR$/TestDeckList" />
         <option value="$PROJECT_DIR$/MtGDeckAnalyzer.py" />
+        <option value="$PROJECT_DIR$/MtGUtils.py" />
       </list>
     </option>
   </component>
@@ -197,6 +198,17 @@
             <path>
               <item name="MagicTheGathering" type="b2602c69:ProjectViewProjectNode" />
               <item name="MagicTheGathering" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MagicTheGathering" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MagicTheGathering" type="462c0819:PsiDirectoryNode" />
+              <item name="mtg-sdk-python" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MagicTheGathering" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MagicTheGathering" type="462c0819:PsiDirectoryNode" />
+              <item name="mtg-sdk-python" type="462c0819:PsiDirectoryNode" />
+              <item name="mtgsdk" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -575,14 +587,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mtg-sdk-python/mtgsdk/querybuilder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mtg-sdk-python/mtgsdk/card.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="46">
@@ -597,16 +601,6 @@
           <caret line="4" column="9" lean-forward="false" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MtGUtils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="33" lean-forward="false" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -659,10 +653,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mtg-sdk-python/mtgsdk/querybuilder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-422">
+          <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MtGDeckAnalyzer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+        <state relative-caret-position="180">
+          <caret line="19" column="3" lean-forward="true" selection-start-line="19" selection-start-column="3" selection-end-line="19" selection-end-column="3" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
             <element signature="e#477#858#0" expanded="false" />
@@ -672,6 +674,16 @@
             <element signature="e#5434#5849#0" expanded="false" />
             <element signature="e#12721#14288#0" expanded="false" />
             <element signature="e#14388#16010#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MtGUtils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>

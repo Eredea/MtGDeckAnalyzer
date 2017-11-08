@@ -15,10 +15,8 @@ def search(**kwargs):
         I think I am going to update it to contain a dictionary that maps the keys and values to the filters used."""
     results = Card.where(**kwargs).all()
     cardNames = set(card.name for card in results)
-    cardList = [next(card for card in results if card.name == name and card.image_url is not None) for name in cardNames]
+    return Deck([next(card for card in results if card.name == name and card.image_url is not None) for name in cardNames])
 
-    deck = Deck(cardList)
-    return deck
 
 
 
