@@ -1,4 +1,5 @@
 import tkinter
+from tkinter import filedialog
 from MtGUtils import *
 from PIL import Image, ImageTk
 from urllib.request import urlopen
@@ -15,7 +16,136 @@ Brainstorm
 Swords to plowshares
 Lightning Storm
 Drain Life
+Myr Galvanizer
 """
+
+def get_card_picture(card):
+    """:param card: Card object
+       :returns ImageTk.PhotoImage of Card
+    """
+    # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
+    # and recreating it from its bytes
+    imageFileObject = Image.open(BytesIO(urlopen(card.image_url).read()))
+    cardImage = ImageTk.PhotoImage(imageFileObject)
+    return cardImage
+
+
+class AdvancedSearchWindow(tkinter.Toplevel):
+    searchableFilters = [ 'name','type', 'cmc', 'rarity', 'setName', 'text', 'power', 'set', 'id', 'originalType', 'flavor',
+                         'watermark', 'printings', 'subtypes', 'originalText', 'toughness', 'types', 'number',
+                         'artist', 'layout',  'imageUrl', 'legalities', 'foreignNames', 'manaCost',
+                          'multiverseid']
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        horizontal = tkinter.Frame(self)
+
+        frameObj = tkinter.Frame(self, height = 300, width = 300)
+
+        choices = ['AND','OR','NOT']
+        variable = tkinter.StringVar(self)
+        variable.set("AND")
+        andOrBox = tkinter.OptionMenu(horizontal, variable, *choices)
+
+        otherVariable = tkinter.StringVar(self)
+        otherVariable.set("name")
+
+        filterBox = tkinter.OptionMenu(horizontal, otherVariable, *AdvancedSearchWindow.searchableFilters)
+
+        searchBox = tkinter.Entry(horizontal)
+        andOrBox.pack(side = 'left')
+        filterBox.pack(side = 'left')
+        searchBox.pack(side = 'left')
+
+        self.resultBox = CardListDisplay(self, linkedDisplay=True)
+        filterDict ={}
+        searchButton = tkinter.Button(self, command = lambda: adv_search_card(filterDict), text="Search for your card")
+        addFilterButton = tkinter.Button(self, command = lambda: add_filter(), text = "Add a filter" )
+
+        filters = tkinter.Listbox(self)
+        self.image = get_card_picture(get_card_by_name("Swords to plowshares"))
+        self.cardImageBox = tkinter.Label(self, image = self.image, height=300, width=300)
+        filters.pack()
+        addFilterButton.pack()
+        horizontal.pack()
+        self.resultBox.pack()
+        searchButton.pack()
+        self.cardImageBox.pack()
+        frameObj.pack(fill = 'both')
+
+        def add_filter():
+            print(otherVariable.get())
+            filterDict[otherVariable.get()] = searchBox.get()
+            filters.insert('end', otherVariable.get() + ' ' + searchBox.get())
+
+
+        def adv_search_card(dict):
+            results = search(**dict)
+            print(results)
+            self.resultBox.show_deck(results)
+
+    def display_card(self, card):
+        image = get_card_picture(card)
+        self.cardImageBox.config(image = image)
+        # This is necessary because tkinter doesn't update python, so we need to hold on to the reference
+        self.cardImageBox.image = image
+        # We could later just implement a card.displayInfo property, but extending card is hard because of how they're built. Will have to change module
+
+
+
+def create_advanced_search_window(parent):
+    newWindow = AdvancedSearchWindow(parent)
+def reate_advanced_search_window(parent):
+    window = tkinter.Toplevel(parent)
+
+
+
+    horizontal = tkinter.Frame(window)
+
+    frameObj = tkinter.Frame(window, height = 300, width = 300)
+
+    choices = ['AND','OR','NOT']
+    variable = tkinter.StringVar(window)
+    variable.set("AND")
+    andOrBox = tkinter.OptionMenu(horizontal, variable, *choices)
+
+    searchableFilters = {'multiverseid', 'name', 'rarity', 'setName', 'set', 'id', 'originalType', 'flavor', 'watermark', 'printings', 'subtypes', 'originalText', 'text', 'toughness', 'types', 'number', 'artist', 'layout', 'power', 'imageUrl', 'legalities', 'foreignNames', 'manaCost', 'type', 'cmc'}
+    otherVariable = tkinter.StringVar(window)
+    otherVariable.set("name")
+
+    filterBox = tkinter.OptionMenu(horizontal, otherVariable, *searchableFilters)
+
+    searchBox = tkinter.Entry(horizontal)
+    andOrBox.pack(side = 'left')
+    filterBox.pack(side = 'left')
+    searchBox.pack(side = 'left')
+
+    resultBox = CardListDisplay(window)
+    filterDict ={}
+    searchButton = tkinter.Button(window, command = lambda: adv_search_card(filterDict), text="Search for your card")
+    addFilterButton = tkinter.Button(window, command = lambda: add_filter(), text = "Add a filter" )
+
+    filters = tkinter.Listbox(window)
+
+    filters.pack()
+    addFilterButton.pack()
+    horizontal.pack()
+    resultBox.pack()
+    searchButton.pack()
+    frameObj.pack(fill = 'both')
+
+    def add_filter():
+        print(otherVariable.get())
+        filterDict[otherVariable.get()] = searchBox.get()
+        filters.insert('end', otherVariable.get() + searchBox.get())
+
+
+    def adv_search_card(cardName):
+        results = Deck(Card.where(**filterDict).all())
+        print(results)
+        resultBox.show_deck(results)
+
 
 # May want to later add functionality here, so abstracted it out
 class Client:
@@ -32,8 +162,28 @@ class Client:
 
     #Not even used in the app yet
 
-class MainPage:
 
+
+class MainPage():
+
+    def open_deck(self, parent):
+        filename = filedialog.askopenfilename(initialdir="/home/Eredea/PycharmProjects/MagicTheGathering",
+                                              title="Select file",
+                                              filetypes=( ("all files", "*.*"),("jpeg files", "*.jpg")))
+        with open(filename) as f:
+            content = f.readlines()
+            content = [x.strip() for x in content]
+        new_Deck = Deck(content)
+        for card in new_Deck:
+            print(card.cmc)
+        self.deckListDisplay.show_deck(new_Deck)
+
+    def save_deck(self, deck):
+        file = filedialog.asksaveasfilename()
+        f = open(file, "w+")
+        for card in deck:
+            f.write(card.name + '\n')
+        f.close()
 
     def __init__(self, master, deck=Deck()):
         """MainPage is where we compose all the tkinter UI elements and associated resources into one working application.
@@ -41,6 +191,16 @@ class MainPage:
         self.deck = deck
         self.master = master
         self.master.display_card = self.display_card
+        self.master.advanced_search = create_advanced_search_window
+
+
+        menubar = tkinter.Menu(master)
+        filemenu = tkinter.Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Open", command =  lambda: self.open_deck(self.master))
+        filemenu.add_command(label="Save", command = lambda: self.save_deck(self.deck))
+        filemenu.add_separator()
+        menubar.add_cascade(label="File", menu=filemenu)
+        master.config(menu=menubar)
 
 
         self.leftDisplay = LeftDisplay(self.master,bg= 'black',width = 50,borderwidth = 1,relief = 'raised')
@@ -51,7 +211,8 @@ class MainPage:
         self.cardPoolDisplay = CardListDisplay(self.master, linkedDisplay=True, width =100, height =20)
 
         self.stats_viewer = StatisticViewer(self.master)
-        self.statsButton = tkinter.Button(self.master, command= lambda: self.stats_viewer.refreshFigure(self.deck.manaColorProportions))
+        self.stats_viewer.updateButton['command'] = lambda: self.stats_viewer.reAnalyze(self.deck)
+        self.stats_viewer.reAnalyze(self.deck)
 
         self.deckListDisplay = CardListDisplay(self.master, linkedDisplay=True, height = 40, width = 30)
         self.deckListDisplay.show_deck(deck)
@@ -60,7 +221,6 @@ class MainPage:
         self.cardPoolDisplay.pack(fill='both', side='bottom')
         self.deckListDisplay.pack(fill = 'both', side = 'right')
         self.stats_viewer.pack()
-        self.statsButton.pack()
         tkinter.Label(text = "Your card pool:").pack()
 
     def start_UI(self):
@@ -93,7 +253,7 @@ class LeftDisplay(tkinter.Frame):
         self.parent = parent
 
         # There is always one displayed card in this area, and functions act around it.
-        self.displayedCard = get_card_by_name("Khalni Hydra")
+        self.displayedCard = get_card_by_name("Swords to Plowshares")
 
         # Placeholder image object
         self.image = get_card_picture(self.displayedCard)
@@ -103,7 +263,6 @@ class LeftDisplay(tkinter.Frame):
         self.cardImageBox.image = self.image
 
         #Here we create the text that displays MtG information about the card
-
         self.cardInfoDisplay = tkinter.Message(self, text="Card Information will be displayed here.", justify='left')
 
         #Searchbox for cards and corresponding results
@@ -119,7 +278,7 @@ class LeftDisplay(tkinter.Frame):
         # But now our code is more seperated.
         self.deckListButton = tkinter.Button(self, font = 'Times', bg='black', fg= 'white', text="Add to DeckList")
         self.cardPoolButton = tkinter.Button(self, font = 'Times', bg='black', fg= 'white', text="Add to Cardpool")
-        self.advancedSearchButton = tkinter.Button(self, text = "Bring advanced search", command = self.advanced_search)
+        self.advancedSearchButton = tkinter.Button(self, text = "Bring advanced search", command = lambda: create_advanced_search_window(self.parent))
 
 
         self.cardImageBox.pack(side='top')
@@ -130,37 +289,6 @@ class LeftDisplay(tkinter.Frame):
         self.deckListButton.pack()
         self.cardPoolButton.pack()
         self.advancedSearchButton.pack()
-
-    def advanced_search(self):
-        window = tkinter.Toplevel(self.parent)
-
-        horizontal = tkinter.Frame(window)
-
-        frameObj = tkinter.Frame(window, height = 300, width = 300)
-
-        choices = ['AND','OR','NOT']
-        variable = tkinter.StringVar(window)
-        variable.set("AND")
-        andOrBox = tkinter.OptionMenu(horizontal, variable, *choices)
-        andOrBox.pack(side = 'left', )
-
-
-        searchBox = tkinter.Entry(horizontal)
-        searchBox.pack(side = 'left')
-
-        resultBox = CardListDisplay(window)
-
-        searchButton = tkinter.Button(window, command = lambda: adv_search_card(searchBox.get()))
-
-        searchButton.pack()
-        horizontal.pack()
-        resultBox.pack()
-        frameObj.pack()
-
-
-        def adv_search_card(cardName):
-            results = Deck.search(cardName)
-            resultBox.show_deck(results)
 
     def display_card(self, card):
 
@@ -180,7 +308,9 @@ class LeftDisplay(tkinter.Frame):
     def search_card(self, cardName):
         # When Searching I could populate all results and have them stored ready to click
         # Right now I just display the search results and then when clicking the listbox create another card item
-        searchResults = search(cardName)
+        dict = {}
+        dict['name'] = cardName
+        searchResults = search(**dict)
         self.searchResultsList.show_deck(searchResults)
 
 class StatisticViewer(tkinter.Frame):
@@ -192,27 +322,37 @@ class StatisticViewer(tkinter.Frame):
     def __init__(self, master, **kwargs):
         super().__init__(master, kwargs)
 
-        f = Figure(figsize=(5, 5), dpi=100)
-        self.a = f.add_subplot(111)
+        #We have two figures used to display graphics
+        f1 = Figure(figsize=(5, 5), dpi=100)
+        f2 = Figure(figsize=(5, 5), dpi=100)
+        sizes = [16,16,16,16,16, 16]
+
+        self.f1SubPlot = f1.add_subplot(111)
+        self.f1SubPlot.pie(sizes, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
+        self.canvas1 = FigureCanvasTkAgg(f1, self)
+        self.canvas1.show()
+        self.canvas1.get_tk_widget().pack(side=tkinter.LEFT, fill=tkinter.BOTH)
 
 
-        sizes = [20,20,20,20,20, 0]
-        self.a.pie(sizes, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
 
-        self.canvas = FigureCanvasTkAgg(f, self)
-        self.canvas.show()
-        self.canvas.get_tk_widget().pack(side=tkinter.BOTTOM, fill=tkinter.BOTH, expand=True)
+        self.f2SubPlot = f2.add_subplot(111)
+        self.f2SubPlot.hist([1,2,3,4,5,6,7,8,9])
+        self.canvas2 = FigureCanvasTkAgg(f2, self)
+        self.canvas2.show()
+        self.canvas2.get_tk_widget().pack(side=tkinter.RIGHT, fill=tkinter.BOTH)
 
-        toolbar = NavigationToolbar2TkAgg(self.canvas, self)
-        toolbar.update()
-        self.canvas._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
+        self.updateButton = tkinter.Button(self)
+        self.updateButton.pack(side = tkinter.BOTTOM)
 
-    def refreshFigure(self, sizes):
-        self.a.clear()
-        self.a.pie(sizes, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
-        self.canvas.draw()
 
     def reAnalyze(self, deck):
+        self.f1SubPlot.clear()
+        self.f1SubPlot.pie(deck.manaColorProportions, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
+        self.canvas1.draw()
+
+        self.f2SubPlot.clear()
+        self.f2SubPlot.hist([card.cmc for card in deck])
+        self.canvas2.draw()
         pass
 
 # Here are custom tk widgets used in the MainPage class
@@ -239,6 +379,7 @@ class CardListDisplay(tkinter.Listbox):
             card = self.deck.get_card(w.get(index))
             image = get_card_picture(card)
         window = tkinter.Toplevel(self.masterFrame)
+        window.attributes("-topmost", True)
         picture = tkinter.Label(window, image = image)
         picture.pack()
         picture.image = image
@@ -257,24 +398,12 @@ class CardListDisplay(tkinter.Listbox):
             index = int(w.curselection()[0])
             cardName = w.get(index)
             card = self.deck.get_card(cardName)
-            print(card)
-            print(card.name)
             self.masterFrame.display_card(card)
 
     @property
     def selectedCard(self):
         pass
 
-
-def get_card_picture(card):
-    """:param card: Card object
-       :returns ImageTk.PhotoImage of Card
-    """
-    # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
-    # and recreating it from its bytes
-    imageFileObject = Image.open(BytesIO(urlopen(card.image_url).read()))
-    cardImage = ImageTk.PhotoImage(imageFileObject)
-    return cardImage
 
 if __name__ == "__main__":
     start = Client().new_instance()
