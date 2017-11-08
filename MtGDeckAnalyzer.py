@@ -7,7 +7,7 @@ from io import BytesIO
 
 import matplotlib
 matplotlib.use("TkAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 
@@ -26,8 +26,7 @@ def get_card_picture(card):
     # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
     # and recreating it from its bytes
     imageFileObject = Image.open(BytesIO(urlopen(card.image_url).read()))
-    cardImage = ImageTk.PhotoImage(imageFileObject)
-    return cardImage
+    return ImageTk.PhotoImage(imageFileObject)
 
 
 class AdvancedSearchWindow(tkinter.Toplevel):
@@ -61,7 +60,8 @@ class AdvancedSearchWindow(tkinter.Toplevel):
 
         self.resultBox = CardListDisplay(self, linkedDisplay=True)
         filterDict ={}
-        searchButton = tkinter.Button(self, command = lambda: adv_search_card(filterDict), text="Search for your card")
+        searchButton = tkinter.Button(self, command = lambda dict: self.resultBox.show_deck(search(**dict))
+, text="Search for your card")
         addFilterButton = tkinter.Button(self, command = lambda: add_filter(), text = "Add a filter" )
 
         filters = tkinter.Listbox(self)
@@ -80,11 +80,6 @@ class AdvancedSearchWindow(tkinter.Toplevel):
             filterDict[otherVariable.get()] = searchBox.get()
             filters.insert('end', otherVariable.get() + ' ' + searchBox.get())
 
-
-        def adv_search_card(dict):
-            results = search(**dict)
-            print(results)
-            self.resultBox.show_deck(results)
 
     def display_card(self, card):
         image = get_card_picture(card)
@@ -124,7 +119,7 @@ def reate_advanced_search_window(parent):
 
     resultBox = CardListDisplay(window)
     filterDict ={}
-    searchButton = tkinter.Button(window, command = lambda: adv_search_card(filterDict), text="Search for your card")
+    searchButton = tkinter.Button(window, command = lambda: resultBox.show_deck(adv_search_card(filterDict)), text="Search for your card")
     addFilterButton = tkinter.Button(window, command = lambda: add_filter(), text = "Add a filter" )
 
     filters = tkinter.Listbox(window)
@@ -142,9 +137,8 @@ def reate_advanced_search_window(parent):
         filters.insert('end', otherVariable.get() + searchBox.get())
 
 
-    def adv_search_card(cardName):
-        results = Deck(Card.where(**filterDict).all())
-        print(results)
+    def adv_search_card(dict):
+        results = search(dict)
         resultBox.show_deck(results)
 
 
