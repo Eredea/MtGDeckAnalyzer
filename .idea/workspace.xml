@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a6c98aaf-0c85-4f85-b878-899da20798a7" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mtg-sdk-python" afterPath="$PROJECT_DIR$/mtg-sdk-python" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MtGDeckAnalyzer.py" afterPath="$PROJECT_DIR$/MtGDeckAnalyzer.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MtGUtils.py" afterPath="$PROJECT_DIR$/MtGUtils.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -30,8 +28,8 @@
       <file leaf-file-name="MtGDeckAnalyzer.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MtGDeckAnalyzer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="174" column="50" lean-forward="true" selection-start-line="174" selection-start-column="50" selection-end-line="174" selection-end-column="50" />
+            <state relative-caret-position="252">
+              <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
                 <element signature="e#477#858#0" expanded="false" />
@@ -663,8 +661,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MtGDeckAnalyzer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="174" column="50" lean-forward="true" selection-start-line="174" selection-start-column="50" selection-end-line="174" selection-end-column="50" />
+        <state relative-caret-position="252">
+          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
             <element signature="e#477#858#0" expanded="false" />
