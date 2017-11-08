@@ -1,5 +1,6 @@
 import tkinter
 import matplotlib
+matplotlib.use("TkAgg")
 from tkinter import filedialog
 from MtGUtils import *
 from PIL import Image, ImageTk
@@ -7,7 +8,6 @@ from urllib.request import urlopen
 from io import BytesIO
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-matplotlib.use("TkAgg")
 
 
 default_decklist = """Llanowar elves
