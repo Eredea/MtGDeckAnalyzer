@@ -31,6 +31,7 @@ def get_card_picture(card):
 
 
 class AdvancedSearchWindow(tkinter.Toplevel):
+    #Use list here because it is ordered and this populates option box
     searchableFilters = [ 'name','type', 'cmc', 'rarity', 'setName', 'text', 'power', 'set', 'id', 'originalType', 'flavor',
                          'watermark', 'printings', 'subtypes', 'originalText', 'toughness', 'types', 'number',
                          'artist', 'layout',  'imageUrl', 'legalities', 'foreignNames', 'manaCost',

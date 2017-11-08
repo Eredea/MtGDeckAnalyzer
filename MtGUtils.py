@@ -1,5 +1,11 @@
 from mtgsdk import Card
+from mtgsdk import QueryBuilder
+from mtgsdk.restclient import RestClient
+from mtgsdk.config import __endpoint__
 import collections
+
+
+
 
 def get_card_by_name(name):
     """ This takes in a card name, and returns a single card object.
@@ -12,15 +18,10 @@ def get_card_by_name(name):
 
 def search(**kwargs):
     """This is to be used to search the api for a card by ambiguous parameters and return a deck container with the resulting cards
-        I think I am going to update it to contain a dictionary that maps the keys and values to the filters used."""
+        I think I am going to update it to contain a dictionary that maps the keys and values to the filters used. It does now."""
     results = Card.where(**kwargs).all()
     cardNames = set(card.name for card in results)
-    return Deck([next(card for card in results if card.name == name and card.image_url is not None) for name in cardNames])
-
-
-
-
-
+    return Deck([next(card for card in results if card.name in cardNames and card.image_url is not None))
 
 
     """
@@ -32,7 +33,6 @@ def search(**kwargs):
             continue
 
             """
-import numpy as np
 
 
 class Deck(collections.MutableSequence):
