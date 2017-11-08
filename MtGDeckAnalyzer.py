@@ -1,15 +1,14 @@
 import tkinter
+import matplotlib
 from tkinter import filedialog
 from MtGUtils import *
 from PIL import Image, ImageTk
 from urllib.request import urlopen
 from io import BytesIO
-
-import matplotlib
-matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-import contexttimer
+matplotlib.use("TkAgg")
+
 
 default_decklist = """Llanowar elves
 Brainstorm
@@ -114,9 +113,9 @@ class Client:
     #Not even used in the app yet
 
 
-
 class MainPage():
 
+    #Callback for FileMenu commands
     def open_deck(self, parent):
         filename = filedialog.askopenfilename(initialdir="/home/Eredea/PycharmProjects/MagicTheGathering",
                                               title="Select file",
@@ -128,7 +127,6 @@ class MainPage():
         for card in new_Deck:
             print(card.cmc)
         self.deckListDisplay.show_deck(new_Deck)
-
     def save_deck(self, deck):
         file = filedialog.asksaveasfilename()
         f = open(file, "w+")
@@ -357,7 +355,6 @@ class CardListDisplay(tkinter.Listbox):
     @property
     def selectedCard(self):
         pass
-
 
 if __name__ == "__main__":
     start = Client().new_instance()

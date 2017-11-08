@@ -50,7 +50,6 @@ class Deck(collections.MutableSequence):
     def __len__(self):
         return len(self.cards)
 
-
     def __delitem__(self, index):
         del(self.cards[index])
 
