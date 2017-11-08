@@ -9,7 +9,7 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-
+import contexttimer
 
 default_decklist = """Llanowar elves
 Brainstorm
@@ -18,7 +18,6 @@ Lightning Storm
 Drain Life
 Myr Galvanizer
 """
-
 def get_card_picture(card):
     """:param card: Card object
        :returns ImageTk.PhotoImage of Card
@@ -26,7 +25,8 @@ def get_card_picture(card):
     # We ultimately create an Image object after downloading from a url, reading the raw data with a context manager
     # and recreating it from its bytes
     imageFileObject = Image.open(BytesIO(urlopen(card.image_url).read()))
-    return ImageTk.PhotoImage(imageFileObject)
+    picture = ImageTk.PhotoImage(imageFileObject)
+    return picture
 
 
 class AdvancedSearchWindow(tkinter.Toplevel):
@@ -60,8 +60,13 @@ class AdvancedSearchWindow(tkinter.Toplevel):
 
         self.resultBox = CardListDisplay(self, linkedDisplay=True)
         filterDict ={}
-        searchButton = tkinter.Button(self, command = lambda dict: self.resultBox.show_deck(search(**dict))
-, text="Search for your card")
+
+        def searchButton():
+            # I like this solution better than lambdas
+            self.resultBox.show_deck(search(**filterDict))
+        searchButton = tkinter.Button(self, command = searchButton, text="Search for your card")
+
+
         addFilterButton = tkinter.Button(self, command = lambda: add_filter(), text = "Add a filter" )
 
         filters = tkinter.Listbox(self)
@@ -92,55 +97,6 @@ class AdvancedSearchWindow(tkinter.Toplevel):
 
 def create_advanced_search_window(parent):
     newWindow = AdvancedSearchWindow(parent)
-def reate_advanced_search_window(parent):
-    window = tkinter.Toplevel(parent)
-
-
-
-    horizontal = tkinter.Frame(window)
-
-    frameObj = tkinter.Frame(window, height = 300, width = 300)
-
-    choices = ['AND','OR','NOT']
-    variable = tkinter.StringVar(window)
-    variable.set("AND")
-    andOrBox = tkinter.OptionMenu(horizontal, variable, *choices)
-
-    searchableFilters = {'multiverseid', 'name', 'rarity', 'setName', 'set', 'id', 'originalType', 'flavor', 'watermark', 'printings', 'subtypes', 'originalText', 'text', 'toughness', 'types', 'number', 'artist', 'layout', 'power', 'imageUrl', 'legalities', 'foreignNames', 'manaCost', 'type', 'cmc'}
-    otherVariable = tkinter.StringVar(window)
-    otherVariable.set("name")
-
-    filterBox = tkinter.OptionMenu(horizontal, otherVariable, *searchableFilters)
-
-    searchBox = tkinter.Entry(horizontal)
-    andOrBox.pack(side = 'left')
-    filterBox.pack(side = 'left')
-    searchBox.pack(side = 'left')
-
-    resultBox = CardListDisplay(window)
-    filterDict ={}
-    searchButton = tkinter.Button(window, command = lambda: resultBox.show_deck(adv_search_card(filterDict)), text="Search for your card")
-    addFilterButton = tkinter.Button(window, command = lambda: add_filter(), text = "Add a filter" )
-
-    filters = tkinter.Listbox(window)
-
-    filters.pack()
-    addFilterButton.pack()
-    horizontal.pack()
-    resultBox.pack()
-    searchButton.pack()
-    frameObj.pack(fill = 'both')
-
-    def add_filter():
-        print(otherVariable.get())
-        filterDict[otherVariable.get()] = searchBox.get()
-        filters.insert('end', otherVariable.get() + searchBox.get())
-
-
-    def adv_search_card(dict):
-        results = search(dict)
-        resultBox.show_deck(results)
-
 
 # May want to later add functionality here, so abstracted it out
 class Client:
@@ -358,10 +314,13 @@ class CardListDisplay(tkinter.Listbox):
         super().__init__(self.masterFrame, kwargs)
 
         self.deck = deck
+
         self.linkedDisplay = linkedDisplay
         if self.linkedDisplay:
             self.bind('<<ListboxSelect>>', self.click_deck_list)
+
         self.bind('<Double-1>', self.doubleclick)
+
     def add_card(self, card):
         card = card if type(card) is Card else get_card_by_name(card)
         self.insert('end',card.name)
@@ -371,7 +330,7 @@ class CardListDisplay(tkinter.Listbox):
         w = event.widget
         if w.curselection():
             index = int(w.curselection()[0])
-            card = self.deck.get_card(w.get(index))
+            card = self.deck[index]
             image = get_card_picture(card)
         window = tkinter.Toplevel(self.masterFrame)
         window.attributes("-topmost", True)
@@ -392,7 +351,7 @@ class CardListDisplay(tkinter.Listbox):
         if w.curselection():
             index = int(w.curselection()[0])
             cardName = w.get(index)
-            card = self.deck.get_card(cardName)
+            card = self.deck[cardName]
             self.masterFrame.display_card(card)
 
     @property

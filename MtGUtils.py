@@ -1,14 +1,12 @@
 from mtgsdk import Card
-from mtgsdk import QueryBuilder
-from mtgsdk.restclient import RestClient
-from mtgsdk.config import __endpoint__
 import collections
 
 
 
 
 def get_card_by_name(name):
-    """ This takes in a card name, and returns a single card object.
+    """ DONE
+    This takes in a card name, and returns a single card object.
         When using the API, a search for a single card by name returns an object of the card for every set it was printed in.
         This is to get around that.
         :param name: Name of the card to search
@@ -17,8 +15,7 @@ def get_card_by_name(name):
     return next(card for card in Card.where(name = name) if card.image_url is not None)
 
 def search(**kwargs):
-    """This is to be used to search the api for a card by ambiguous parameters and return a deck container with the resulting cards
-        I think I am going to update it to contain a dictionary that maps the keys and values to the filters used. It does now."""
+    """I understand the API and sdk much more thoroughly now, it was from python 2 so implementing iter instead of __iter__."""
     results = Card.where(**kwargs).all()
     cardNames = set(card.name for card in results)
     return Deck([next(card for card in results if card.name == name and card.image_url is not None) for name in cardNames])
@@ -53,8 +50,6 @@ class Deck(collections.MutableSequence):
     def __len__(self):
         return len(self.cards)
 
-    def __getitem__(self, index):
-        return self.cards[index]
 
     def __delitem__(self, index):
         del(self.cards[index])
@@ -65,8 +60,8 @@ class Deck(collections.MutableSequence):
     def insert(self, index, value):
         self.cards.insert(index,value)
 
-    def get_card(self, cardNameStr):
-        return next(card for card in self.cards if card.name == cardNameStr)
+    def __getitem__(self, search):
+        return next(card for card in self.cards if card.name == search) if type(search) is str else self.cards[search]
 
     def add_card(self, card):
         """Should be called with a string or a Card object"""
