@@ -21,17 +21,6 @@ def search(**kwargs):
     return Deck([next(card for card in results if card.name == name and card.image_url is not None) for name in cardNames])
 
 
-    """
-    for cardname in cardNames:
-        for card in results:
-            if card.name == cardname and card.image_url is not None:
-                deck.add_card(card)
-                break
-            continue
-
-            """
-
-
 class Deck(collections.MutableSequence):
     # Colors of the cards don't change, so we make this a class variable
     color_ids = 'B', 'U', 'G', 'R', 'W', None
@@ -43,6 +32,9 @@ class Deck(collections.MutableSequence):
     def __iter__(self):
         for card in self.cards:
             yield card
+
+    def __len__(self):
+        return len(self)
 
     def __str__(self):
         return '\n'.join([card.name for card in self])
@@ -105,9 +97,3 @@ class Deck(collections.MutableSequence):
         pass
 
 
-
-
-
-a = Deck(["LLanowar Elves", "Swords to plowshares"])
-
-print(a)
