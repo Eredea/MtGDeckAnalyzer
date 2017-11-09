@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7da2210b-71bc-4a27-9084-c0dfbefa7e9d" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mtg-sdk-python" afterPath="$PROJECT_DIR$/mtg-sdk-python" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MtGDeckAnalyzer.py" afterPath="$PROJECT_DIR$/MtGDeckAnalyzer.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="MtGDeckAnalyzer.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MtGDeckAnalyzer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MtGDeckAnalyzer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="15" column="14" lean-forward="false" selection-start-line="15" selection-start-column="14" selection-end-line="15" selection-end-column="14" />
+            <state relative-caret-position="547">
+              <caret line="251" column="49" lean-forward="false" selection-start-line="251" selection-start-column="49" selection-end-line="251" selection-end-column="49" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
                 <element signature="e#436#838#0" expanded="false" />
@@ -27,9 +27,18 @@
                 <element signature="e#1540#1644#0" expanded="false" />
                 <element signature="e#3715#6486#0" expanded="false" />
                 <element signature="e#6532#8100#0" expanded="false" />
-                <element signature="e#8218#10703#0" expanded="false" />
-                <element signature="e#10792#12371#0" expanded="false" />
+                <element signature="e#11189#12768#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="querybuilder.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/mtg-sdk-python/mtgsdk/querybuilder.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="21">
+              <caret line="79" column="23" lean-forward="false" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -78,9 +87,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/MtGDeckAnalyzer.py" />
         <option value="$PROJECT_DIR$/MtGUtils.py" />
         <option value="$PROJECT_DIR$/Deck.py" />
+        <option value="$PROJECT_DIR$/MtGDeckAnalyzer.py" />
       </list>
     </option>
   </component>
@@ -113,6 +122,17 @@
             <path>
               <item name="MtGDeckAnalyzer" type="b2602c69:ProjectViewProjectNode" />
               <item name="MtGDeckAnalyzer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MtGDeckAnalyzer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MtGDeckAnalyzer" type="462c0819:PsiDirectoryNode" />
+              <item name="mtg-sdk-python" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MtGDeckAnalyzer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MtGDeckAnalyzer" type="462c0819:PsiDirectoryNode" />
+              <item name="mtg-sdk-python" type="462c0819:PsiDirectoryNode" />
+              <item name="mtgsdk" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -241,8 +261,7 @@
             <element signature="e#1540#1644#0" expanded="false" />
             <element signature="e#3715#6486#0" expanded="false" />
             <element signature="e#6532#8100#0" expanded="false" />
-            <element signature="e#8218#10703#0" expanded="false" />
-            <element signature="e#10792#12371#0" expanded="false" />
+            <element signature="e#11189#12768#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -279,8 +298,7 @@
             <element signature="e#1540#1644#0" expanded="false" />
             <element signature="e#3715#6486#0" expanded="false" />
             <element signature="e#6532#8100#0" expanded="false" />
-            <element signature="e#8218#10703#0" expanded="false" />
-            <element signature="e#10792#12371#0" expanded="false" />
+            <element signature="e#11189#12768#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -317,8 +335,7 @@
             <element signature="e#1540#1644#0" expanded="false" />
             <element signature="e#3715#6486#0" expanded="false" />
             <element signature="e#6532#8100#0" expanded="false" />
-            <element signature="e#8218#10703#0" expanded="false" />
-            <element signature="e#10792#12371#0" expanded="false" />
+            <element signature="e#11189#12768#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -355,8 +372,7 @@
             <element signature="e#1540#1644#0" expanded="false" />
             <element signature="e#3715#6486#0" expanded="false" />
             <element signature="e#6532#8100#0" expanded="false" />
-            <element signature="e#8218#10703#0" expanded="false" />
-            <element signature="e#10792#12371#0" expanded="false" />
+            <element signature="e#11189#12768#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -393,8 +409,7 @@
             <element signature="e#1540#1644#0" expanded="false" />
             <element signature="e#3715#6486#0" expanded="false" />
             <element signature="e#6532#8100#0" expanded="false" />
-            <element signature="e#8218#10703#0" expanded="false" />
-            <element signature="e#10792#12371#0" expanded="false" />
+            <element signature="e#11189#12768#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -448,8 +463,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MtGDeckAnalyzer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="15" column="14" lean-forward="false" selection-start-line="15" selection-start-column="14" selection-end-line="15" selection-end-column="14" />
+        <state relative-caret-position="547">
+          <caret line="251" column="49" lean-forward="false" selection-start-line="251" selection-start-column="49" selection-end-line="251" selection-end-column="49" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
             <element signature="e#436#838#0" expanded="false" />
@@ -458,9 +473,16 @@
             <element signature="e#1540#1644#0" expanded="false" />
             <element signature="e#3715#6486#0" expanded="false" />
             <element signature="e#6532#8100#0" expanded="false" />
-            <element signature="e#8218#10703#0" expanded="false" />
-            <element signature="e#10792#12371#0" expanded="false" />
+            <element signature="e#11189#12768#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mtg-sdk-python/mtgsdk/querybuilder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="79" column="23" lean-forward="false" selection-start-line="79" selection-start-column="23" selection-end-line="79" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>

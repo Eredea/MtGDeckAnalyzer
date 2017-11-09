@@ -212,46 +212,51 @@ class AdvancedSearchWindow(tkinter.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
 
-        horizontal = tkinter.Frame(self)
+        self.horizontal = tkinter.Frame(self)
 
         choices = ['AND','OR','NOT']
-        variable = tkinter.StringVar(self)
-        variable.set("AND")
-        andOrBox = tkinter.OptionMenu(horizontal, variable, *choices)
+        self.variable = tkinter.StringVar(self)
+        self.variable.set("AND")
+        self.andOrBox = tkinter.OptionMenu(self.horizontal, self.variable, *choices)
 
-        filterName = tkinter.StringVar(self)
-        filterName.set("name")
-        filterBox = tkinter.OptionMenu(horizontal, filterName, *AdvancedSearchWindow.searchableFilters)
+        self.filterName = tkinter.StringVar(self)
+        self.filterName.set("name")
+        self.filterBox = tkinter.OptionMenu(self.horizontal, self.filterName, *AdvancedSearchWindow.searchableFilters)
 
-        searchBox = tkinter.Entry(horizontal)
-        andOrBox.pack(side = 'left')
-        filterBox.pack(side = 'left')
-        searchBox.pack(side = 'left')
+        self.searchBox = tkinter.Entry(self.horizontal)
+        self.andOrBox.pack(side = 'left')
+        self.filterBox.pack(side = 'left')
+        self.searchBox.pack(side = 'left')
 
         self.resultBox = DeckListDisplay(self, linkedDisplay=True)
-        filterDict ={}
+        self.filterDict ={}
 
         def searchButton():
             # I like this solution better than lambdas
-            self.resultBox.show_deck(mgu.search(**filterDict))
+            self.resultBox.show_deck(mgu.search(**self.filterDict))
 
-        searchButton = tkinter.Button(self, command = searchButton, text="Search for your card")
+        self.searchButton = tkinter.Button(self, command = searchButton, text="Search for your card")
 
         def add_filter():
-            filterDict[filterName.get()] = searchBox.get()
-            filters.insert('end', filterName.get() + ' ' + searchBox.get())
+            self.filterDict[self.filterName.get()] = self.searchBox.get()
+            self.activeFilters.insert('end', self.filterName.get() + ' ' + self.searchBox.get())
 
-        addFilterButton = tkinter.Button(self, command = add_filter, text = "Add a filter" )
+        self.horizontal2 = tkinter.Frame(self)
+        self.addFilterButton = tkinter.Button(self.horizontal2, command = add_filter, text = "Add a filter" )
+        self.removeFilterButton = tkinter.Button(self.horizontal2)
+        self.addFilterButton.pack(side = 'left')
+        self.removeFilterButton.pack(side = 'left')
 
-        filters = tkinter.Listbox(self)
+
+        self.activeFilters = tkinter.Listbox(self)
         self.image = mgu.get_card_picture(mgu.get_card_by_name("Swords to plowshares"))
         self.cardImageBox = tkinter.Label(self, image = self.image, height=300, width=300)
 
-        filters.pack()
-        addFilterButton.pack()
-        horizontal.pack()
+        self.activeFilters.pack()
+        self.horizontal2.pack()
+        self.horizontal.pack()
         self.resultBox.pack()
-        searchButton.pack()
+        self.searchButton.pack()
         self.cardImageBox.pack()
 
 
