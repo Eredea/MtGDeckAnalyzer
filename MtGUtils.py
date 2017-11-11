@@ -34,4 +34,5 @@ def get_card_picture(card):
     with urlopen(card.image_url) as f:
         with Image.open(BytesIO(f.read())) as imageFile:
             return ImageTk.PhotoImage(imageFile)
+        return None
     return None

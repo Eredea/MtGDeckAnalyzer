@@ -16,6 +16,8 @@ Drain Life
 Myr Galvanizer
 """
 
+def load_deck_from_file():
+    pass
 
 # May want to later add functionality here, so abstracted it out
 class Client:
@@ -42,6 +44,7 @@ class MainPage(tkinter.Frame):
                                               title="Select file",
                                               filetypes=( ("all files", "*.*"),("jpeg files", "*.jpg")))
         with open(filename) as f:
+
             self.deckListDisplay.show_deck(Deck([x.strip() for x in f]))
 
     def save_deck(self, deck):
@@ -191,6 +194,7 @@ class StatisticViewer(tkinter.Frame):
 
 
     def reAnalyze(self, deck):
+        print(repr(deck))
         self.f1SubPlot.clear()
         self.f1SubPlot.pie(deck.manaColorProportions, labels = StatisticViewer.pieChartLabels, colors = StatisticViewer.pieChartColors, explode=[0,0,0,.1,0,0], shadow=True, autopct='%1.1f%%')
         self.canvas1.draw()
@@ -210,6 +214,8 @@ class AdvancedSearchWindow(tkinter.Toplevel):
                           'multiverseid']
 
     def __init__(self, parent):
+        from collections import OrderedDict
+
         super().__init__(parent)
 
         self.horizontal = tkinter.Frame(self)
@@ -223,13 +229,18 @@ class AdvancedSearchWindow(tkinter.Toplevel):
         self.filterName.set("name")
         self.filterBox = tkinter.OptionMenu(self.horizontal, self.filterName, *AdvancedSearchWindow.searchableFilters)
 
+        self.activeFilters = tkinter.Listbox(self)
+        self.image = mgu.get_card_picture(mgu.get_card_by_name("Swords to plowshares"))
+        self.cardImageBox = tkinter.Label(self, image = self.image, height=300, width=300)
+
+
         self.searchBox = tkinter.Entry(self.horizontal)
         self.andOrBox.pack(side = 'left')
         self.filterBox.pack(side = 'left')
         self.searchBox.pack(side = 'left')
 
         self.resultBox = DeckListDisplay(self, linkedDisplay=True)
-        self.filterDict ={}
+        self.filterDict = OrderedDict()
 
         def searchButton():
             # I like this solution better than lambdas
@@ -243,14 +254,21 @@ class AdvancedSearchWindow(tkinter.Toplevel):
 
         self.horizontal2 = tkinter.Frame(self)
         self.addFilterButton = tkinter.Button(self.horizontal2, command = add_filter, text = "Add a filter" )
-        self.removeFilterButton = tkinter.Button(self.horizontal2)
+
+        def remove_filter():
+            # This relies on the active filters box and the filter dict having the same indeces, which they always should... for now
+            print(self.activeFilters.curselection())
+            value = self.activeFilters.get(self.activeFilters.curselection())
+            del self.filterDict[value.split()[0]]
+            self.activeFilters.delete(self.activeFilters.curselection())
+
+
+
+        self.removeFilterButton = tkinter.Button(self.horizontal2, command = remove_filter)
         self.addFilterButton.pack(side = 'left')
         self.removeFilterButton.pack(side = 'left')
 
 
-        self.activeFilters = tkinter.Listbox(self)
-        self.image = mgu.get_card_picture(mgu.get_card_by_name("Swords to plowshares"))
-        self.cardImageBox = tkinter.Label(self, image = self.image, height=300, width=300)
 
         self.activeFilters.pack()
         self.horizontal2.pack()

@@ -9,6 +9,8 @@ class Deck(collections.MutableSequence):
     def __init__(self, cards = [] ):
         """A deck can be initialized with no parameters, with a list of strings, or a list of card objects."""
         self.cards = [MtGUtils.get_card_by_name(card) for card in cards] if cards and type(cards[0]) is str else cards
+        self.sideboard = []
+        self.cardpool = []
 
     def __iter__(self):
         for card in self.cards:
@@ -19,6 +21,21 @@ class Deck(collections.MutableSequence):
 
     def __str__(self):
         return '\n'.join([card.name for card in self])
+
+
+    def __repr__(self):
+        deck = '\n'.join([card.name for card in self])
+        sideboard = '\n'.join([card.name for card in self.sideboard])
+        cardpool = '\n'.join([card.name for card in self.cardpool])
+
+        str="""
+        Decklist:
+        {}
+        Sideboard:
+        {}
+        Cardpool:
+        {}""".format(deck,sideboard,cardpool)
+        return str
 
     def __delitem__(self, index):
         del(self.cards[index])
@@ -34,7 +51,6 @@ class Deck(collections.MutableSequence):
 
     def add_card(self, card):
         """Should be called with a string or a Card object"""
-        #self.cards.append(card) if type(card) == Card else self.cards.append(get_card_by_name(card))
         self.cards.append(card) if type(card) is MtGUtils.Card else self.cards.append(MtGUtils.get_card_by_name(card))
 
 
@@ -53,8 +69,7 @@ class Deck(collections.MutableSequence):
         # I'm sure this area could be chopped down
         colors = [card.color_identity[0] if isinstance(card.color_identity, list) else None for card in self.cards]
         counts = [colors.count(id) for id in Deck.color_ids]
-        proportions = [count/len(colors) for count in counts]
-        return proportions
+        return [count/len(colors) for count in counts]
 
     @property
     def mana_curve(self):
